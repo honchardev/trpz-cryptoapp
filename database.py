@@ -14,6 +14,7 @@ class Database(object):
             cursorclass=pymysql.cursors.DictCursor
         )
         self.cur = self.con.cursor()
+        self.cached_last_saved_value = -1
 
     def close_connection(self):
         self.cur.close()
@@ -53,16 +54,13 @@ class Database(object):
             """
             self.cur.execute(add_btc_price_entry_script, script_values)
             self.con.commit()
+            self.cached_last_saved_value = params
         else:
             raise ValueError("Missing required fields for new btcprices entry.")
 
     def get_btc_price(self, **params):
         if params.get('onlylast') == True:
-            get_btc_price_entry_script = """
-            SELECT * FROM btcprices ORDER BY btcprice_id DESC LIMIT 1;
-            """
-            self.cur.execute(get_btc_price_entry_script)
-            return self.cur.fetchone()
+            return self.cached_last_saved_value
         elif params.get('fromtime'):
             script_values = (
                 params.get('fromtime').strftime('%Y-%m-%d %H:%M:%S'),
