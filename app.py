@@ -1,16 +1,19 @@
-import atexit
+import os
+
 from datetime import datetime
 
 from flask import Flask, render_template, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db = SQLAlchemy(app)
 
 from database import Database
-from exchanges import Coinbase, Coinmarketcap
-from scheduler import Scheduler
 
-db = Database()
-cb = Coinbase()
-cmc = Coinmarketcap()
-app = Flask(__name__)
+dbutils = Database()
 
 
 @app.route('/')
@@ -20,38 +23,14 @@ def home():
 
 @app.route('/api/get')
 def get():
+    print(dbutils.cached_last_saved_value)
     args = request.args
     if args:
         fromtime_str_value = request.args.get('fromtime')
         if not fromtime_str_value:
             return jsonify({'error': 'incorrect api usage'})
-        fromtime_datetime_obj = datetime.strptime(fromtime_str_value, '%Y-%m-%d %H:%M:%S')
-        fromtime_crypto_entries = db.get_btc_price(fromtime=fromtime_datetime_obj)
-        return jsonify(fromtime_crypto_entries)
+        fromtime_crypto_entries = dbutils.get_btc_price(fromtime=fromtime_str_value)
+        return jsonify([entry.as_dict() for entry in fromtime_crypto_entries])
     else:
-        last_crypto_entry = db.get_btc_price(onlylast=True)
+        last_crypto_entry = dbutils.get_btc_price(onlylast=True)
         return jsonify(last_crypto_entry)
-
-
-def scheduler_job():
-    base = 'btc'
-    currency = 'usd'
-    coinmarketcap_data = cmc.get_cmc_data(base)
-    coinbase_data = cb.get_bss_data(base, currency)
-    db.add_btc_price(
-        timestamp=datetime.now(),
-        base=base,
-        currency=currency,
-        buy=coinbase_data.get('buy'),
-        sell=coinbase_data.get('sell'),
-        spot=coinbase_data.get('spot'),
-        cmc=coinmarketcap_data,
-    )
-
-
-if __name__ == "__main__":
-    db.create_tables()
-    schdl = Scheduler(scheduler_job, 10)
-    atexit.register(lambda: db.close_connection)
-    atexit.register(lambda: schdl.bs.shutdown)
-    app.run(host='0.0.0.0', port=5000)

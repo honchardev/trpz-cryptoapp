@@ -39,4 +39,3 @@ class Coinbase(object):
             return response_json.get('data').get('amount')
         else:
             return -1
-

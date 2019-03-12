@@ -1,60 +1,32 @@
-import datetime
+from datetime import datetime
 
-import pymysql
+from sqlalchemy.exc import DatabaseError
+
+from models import BTCPrice
+
+from app import db
 
 
 class Database(object):
+
     def __init__(self):
-        self.con = pymysql.connect(
-            host='localhost',
-            port=3306,
-            user='',
-            password='',
-            db='',
-            cursorclass=pymysql.cursors.DictCursor
-        )
-        self.cur = self.con.cursor()
         self.cached_last_saved_value = -1
-
-    def close_connection(self):
-        self.cur.close()
-        self.con.close()
-
-    def create_tables(self):
-        create_tables_script = """
-        CREATE TABLE IF NOT EXISTS btcprices (
-            btcprice_id INT         AUTO_INCREMENT,
-            timestamp   DATETIME    NOT NULL,
-            base        VARCHAR(25) NOT NULL,
-            currency    VARCHAR(25) NOT NULL,
-            buy         FLOAT       NOT NULL DEFAULT -1.0,
-            sell        FLOAT       NOT NULL DEFAULT -1.0,
-            spot        FLOAT       NOT NULL DEFAULT -1.0,
-            cmc         FLOAT       NOT NULL DEFAULT -1.0,
-            PRIMARY KEY (btcprice_id)
-        ) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
-        """
-        self.cur.execute(create_tables_script)
 
     def add_btc_price(self, **params):
         table_column_names = ['timestamp', 'base', 'currency', 'buy', 'sell', 'spot', 'cmc']
         if all(column_name in table_column_names for column_name in params.keys()):
-            script_values = (
-                params.get('timestamp'),
-                params.get('base'),
-                params.get('currency'),
-                params.get('buy'),
-                params.get('sell'),
-                params.get('spot'),
-                params.get('cmc')
+            new_btcprice = BTCPrice(
+                ts=params.get('timestamp'),
+                base=params.get('base'),
+                cur=params.get('currency'),
+                buy=params.get('buy'),
+                sell=params.get('sell'),
+                spot=params.get('spot'),
+                cmc=params.get('cmc')
             )
-            add_btc_price_entry_script = """
-            INSERT INTO btcprices (timestamp, base, currency, buy, sell, spot, cmc)
-            VALUES (%s, %s, %s, %s, %s, %s, %s);
-            """
-            self.cur.execute(add_btc_price_entry_script, script_values)
-            self.con.commit()
-            self.cached_last_saved_value = params
+            db.session.add(new_btcprice)
+            db.session.commit()
+            self.cached_last_saved_value = dict(params)
         else:
             raise ValueError("Missing required fields for new btcprices entry.")
 
@@ -62,15 +34,8 @@ class Database(object):
         if params.get('onlylast') == True:
             return self.cached_last_saved_value
         elif params.get('fromtime'):
-            script_values = (
-                params.get('fromtime').strftime('%Y-%m-%d %H:%M:%S'),
-                datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            )
-            get_btc_price_entry_script = """
-            SELECT * FROM btcprices
-            WHERE timestamp BETWEEN %s AND %s;
-            """
-            self.cur.execute(get_btc_price_entry_script, script_values)
-            return self.cur.fetchall()
+            from_time = datetime.strptime(params.get('fromtime'), '%Y-%m-%d %H:%M:%S')
+            btc_prices = BTCPrice.query.filter(BTCPrice.timestamp > from_time).all()
+            return btc_prices
         else:
             raise ValueError("Missing required fields to get btcprices entry.")

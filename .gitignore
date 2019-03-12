@@ -1,4 +1,6 @@
-__pycache__
-.vscode
-heroku-creds
-heroku-guide
+.vscode/
+diagrams/
+docs/
+__pycache__/
+venv/
+.env
