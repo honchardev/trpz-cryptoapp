@@ -1,7 +1,9 @@
 from datetime import datetime
-from app import db
-from sqlalchemy import Column, Integer, Float, DateTime, String
+
+from sqlalchemy import Column, DateTime, Float, Integer, String
 from sqlalchemy.ext.declarative import DeclarativeMeta
+
+from app import db
 
 
 class BTCPrice(db.Model):
@@ -37,4 +39,4 @@ class BTCPrice(db.Model):
         self.cmc = cmc
 
     def __repr__(self):
-        return '<id {}>'.format(self.btcprice_id)
+        return '<id {0}. values {1}>'.format(self.btcprice_id, self.as_dict())

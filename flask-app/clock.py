@@ -2,16 +2,16 @@ from datetime import datetime
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+from app import dbutils
 from exchanges import Coinbase, Coinmarketcap
 
-from app import dbutils
 
 cb = Coinbase()
 cmc = Coinmarketcap()
 sched = BlockingScheduler()
 
 
-@sched.scheduled_job('interval', seconds=999)
+@sched.scheduled_job('interval', minutes=999)
 def scheduler_job():
     base = 'btc'
     currency = 'usd'

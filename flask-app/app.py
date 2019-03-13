@@ -15,7 +15,6 @@ from database import Database
 
 dbutils = Database()
 
-
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -23,14 +22,13 @@ def home():
 
 @app.route('/api/get')
 def get():
-    print(dbutils.cached_last_saved_value)
     args = request.args
-    if args:
-        fromtime_str_value = request.args.get('fromtime')
+    fromtime_str_value = request.args.get('fromtime')
+    if fromtime_str_value:
         if not fromtime_str_value:
             return jsonify({'error': 'incorrect api usage'})
         fromtime_crypto_entries = dbutils.get_btc_price(fromtime=fromtime_str_value)
         return jsonify([entry.as_dict() for entry in fromtime_crypto_entries])
     else:
-        last_crypto_entry = dbutils.get_btc_price(onlylast=True)
-        return jsonify(last_crypto_entry)
+        return jsonify({'error': 'incorrect api usage'})
+

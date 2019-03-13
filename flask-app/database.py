@@ -1,16 +1,13 @@
+import json
 from datetime import datetime
 
 from sqlalchemy.exc import DatabaseError
 
-from models import BTCPrice
-
 from app import db
+from models import BTCPrice
 
 
 class Database(object):
-
-    def __init__(self):
-        self.cached_last_saved_value = -1
 
     def add_btc_price(self, **params):
         table_column_names = ['timestamp', 'base', 'currency', 'buy', 'sell', 'spot', 'cmc']
@@ -26,14 +23,12 @@ class Database(object):
             )
             db.session.add(new_btcprice)
             db.session.commit()
-            self.cached_last_saved_value = dict(params)
+            print('added {0} to add_btc_price'.format(new_btcprice.as_dict()))
         else:
             raise ValueError("Missing required fields for new btcprices entry.")
 
     def get_btc_price(self, **params):
-        if params.get('onlylast') == True:
-            return self.cached_last_saved_value
-        elif params.get('fromtime'):
+        if params.get('fromtime'):
             from_time = datetime.strptime(params.get('fromtime'), '%Y-%m-%d %H:%M:%S')
             btc_prices = BTCPrice.query.filter(BTCPrice.timestamp > from_time).all()
             return btc_prices
