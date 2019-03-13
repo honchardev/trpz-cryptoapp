@@ -1,6 +1,15 @@
+# python
+__pycache__/
+migrations/
+venv/
+
+# qt
+
+# environment 
 .vscode/
+.env
+
+# documents
 diagrams/
 docs/
-__pycache__/
-venv/
-.env
+
