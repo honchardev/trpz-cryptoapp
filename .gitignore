@@ -9,7 +9,3 @@ venv/
 .vscode/
 .env
 
-# documents
-diagrams/
-docs/
-
