@@ -1,3 +1,7 @@
 https://doc.qt.io/qtinstallerframework/ifw-tutorial.html
 
 https://doc.qt.io/qtinstallerframework/ifw-offline-installers.html
+
+binarycreator.exe --help
+
+QtInstallerFramework\3.0\examples\tutorial + remove dynamically loaded page

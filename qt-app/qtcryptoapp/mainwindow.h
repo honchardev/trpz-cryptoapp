@@ -3,6 +3,12 @@
 
 #include <QMainWindow>
 
+#include <QDateTime>
+#include <QVector>
+
+#include "dbwrapper.h"
+#include "exchangeprice.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -17,6 +23,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    DBWrapper dbwrapper;
 };
 
 #endif // MAINWINDOW_H

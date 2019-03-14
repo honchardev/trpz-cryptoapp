@@ -1,0 +1,21 @@
+# bitfinex
+Ticker:
+https://api.bitfinex.com/v1/pubticker/btcusd
+https://docs.bitfinex.com/v1/reference#rest-public-ticker
+bid/ask/mid
+20req per min
+
+# coinbase
+Prices:
+https://developers.coinbase.com/api/v2#prices
+https://api.coinbase.com/v2/prices/btc-usd/buy
+https://api.coinbase.com/v2/prices/btc-usd/sell
+https://api.coinbase.com/v2/prices/btc-usd/spot
+buy/sell/spot
+
+# bitstamp
+Ticker:
+https://www.bitstamp.net/api/
+https://www.bitstamp.net/api/v2/ticker/btcusd
+bid/ask/last
+60 req per min
