@@ -9,7 +9,25 @@
 #include <QSqlError>
 #include <QSqlQuery>
 
-#include "exchangeprice.h"
+class ExchangePrice
+{
+public:
+    ExchangePrice(QDateTime timestamp,
+                  QString exchange,
+                  QString base, QString currency,
+                  float bid, float ask, float price
+                  );
+
+    QString toString(void);
+
+    QDateTime timestamp;
+    QString exchange;
+    QString base;
+    QString currency;
+    float bid;
+    float ask;
+    float price;
+};
 
 class DBWrapper
 {
@@ -28,5 +46,7 @@ private:
 
     QSqlDatabase db_conn;
 };
+
+
 
 #endif // DBWRAPPER_H

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -30,12 +30,12 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     dbwrapper.cpp \
-    exchangeprice.cpp
+    exchangeapidata.cpp
 
 HEADERS += \
         mainwindow.h \
     dbwrapper.h \
-    exchangeprice.h
+    exchangeapidata.h
 
 FORMS += \
         mainwindow.ui
