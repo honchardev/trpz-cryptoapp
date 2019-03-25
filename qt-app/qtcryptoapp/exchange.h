@@ -66,7 +66,7 @@ public:
 class CoinbaseExchange : public Exchange
 {
 public:
-    CoinbaseExchange(QObject *parent = nullptr);
+    CoinbaseExchange(QObject *parent = nullptr, DBWrapper *dbwrapper = nullptr);
 
     void set_api_endpoint(QString api_endpoint);
 

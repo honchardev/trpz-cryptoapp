@@ -95,8 +95,8 @@ void BitstampExchange::tim_timeout()
     make_request();
 }
 
-CoinbaseExchange::CoinbaseExchange(QObject *parent) :
-    Exchange (parent)
+CoinbaseExchange::CoinbaseExchange(QObject *parent, DBWrapper *dbwrapper) :
+    Exchange (parent, "NA", dbwrapper)
 {
     connect(exchange_timer, SIGNAL(timeout()),
             this, SLOT(tim_timeout()));
@@ -135,10 +135,10 @@ void CoinbaseExchange::qnam_finished(QNetworkReply *reply)
             exchange_price->price = static_cast<float>(json_coinbase_data["amount"].toString().toDouble());
         }
         else if (reply_url.contains("sell")) {
-            exchange_price->ask = static_cast<float>(json_coinbase_data["amount"].toString().toDouble());
+            exchange_price->bid = static_cast<float>(json_coinbase_data["amount"].toString().toDouble());
         }
         else if (reply_url.contains("buy")) {
-            exchange_price->bid = static_cast<float>(json_coinbase_data["amount"].toString().toDouble());
+            exchange_price->ask = static_cast<float>(json_coinbase_data["amount"].toString().toDouble());
         }
         if (exchange_price->bid != 0.0f && exchange_price->ask != 0.0f && exchange_price->price != 0.0f) {
             dbwrapper->insert_value(*exchange_price);

@@ -11,9 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     dbwrapper = new DBWrapper();
 
-    bitfinex = new BitfinexExchange(this, QString("https://api.bitfinex.com/v1/pubticker/btcusd"));
-    bitstamp = new BitstampExchange(this, QString("https://www.bitstamp.net/api/v2/ticker/btcusd"));
-    coinbase = new CoinbaseExchange(this);
+    bitfinex = new BitfinexExchange(this, QString("https://api.bitfinex.com/v1/pubticker/btcusd"), dbwrapper);
+    bitstamp = new BitstampExchange(this, QString("https://www.bitstamp.net/api/v2/ticker/btcusd"), dbwrapper);
+    coinbase = new CoinbaseExchange(this, dbwrapper);
 }
 
 MainWindow::~MainWindow()
