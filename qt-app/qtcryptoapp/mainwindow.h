@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include <QTimer>
+
 #include "cmcscrapper.h"
 #include "dbwrapper.h"
 #include "exchange.h"

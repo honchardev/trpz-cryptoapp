@@ -1,10 +1,12 @@
 #include "cmcscrapper.h"
 
-#include <QFile>
-
 CMCScrapper::CMCScrapper(QObject *parent) :
     QObject(parent)
 {
+    cmc_timer = new QTimer(this);
+    connect(cmc_timer, SIGNAL(timeout()),
+            this, SLOT(cmc_timeout()));
+    cmc_timer->start(60 * 1000);
 }
 
 void CMCScrapper::make_request()
@@ -53,8 +55,12 @@ void CMCScrapper::qnam_finished(QNetworkReply *reply)
         if (change_match.hasMatch()) {
             change_24h = change_match.captured(3);
         }
-
-        qDebug() << "CMCScrapper::qnam_finished" << market_cap << price << volume_24h << circulating_supply << change_24h;
+        qDebug() << "updated cmcscrapper";
     }
     reply->deleteLater();
+}
+
+void CMCScrapper::cmc_timeout()
+{
+    make_request();
 }

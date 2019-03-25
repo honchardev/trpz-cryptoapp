@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QDebug>
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -16,8 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
     bitfinex = new BitfinexExchange(this, QString("https://api.bitfinex.com/v1/pubticker/btcusd"));
     bitstamp = new BitstampExchange(this, QString("https://www.bitstamp.net/api/v2/ticker/btcusd"));
     coinbase = new CoinbaseExchange(this);
-
-    cmcscrapper->make_request();
 }
 
 MainWindow::~MainWindow()

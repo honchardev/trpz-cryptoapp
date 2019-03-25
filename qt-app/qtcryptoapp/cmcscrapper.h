@@ -9,6 +9,8 @@
 
 #include <QRegularExpression>
 
+#include <QTimer>
+
 class CMCScrapper : public QObject
 {
     Q_OBJECT
@@ -16,6 +18,8 @@ public:
     explicit CMCScrapper(QObject *parent = nullptr);
 
     void make_request(void);
+
+    QTimer *cmc_timer;
 
     QString market_cap;
     QString price;
@@ -27,6 +31,7 @@ signals:
 
 public slots:
     void qnam_finished(QNetworkReply *reply);
+    void cmc_timeout();
 
 private:
     QNetworkAccessManager *qnam_cmc;

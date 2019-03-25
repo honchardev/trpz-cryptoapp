@@ -3,9 +3,16 @@
 
 #include <QObject>
 
+#include <QDateTime>
+
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QUrl>
+
+#include <QJsonDocument>
+#include <QJsonObject>
+
+#include <QTimer>
 
 #include "dbwrapper.h"
 
@@ -14,13 +21,15 @@ class Exchange : public QObject
     Q_OBJECT
 
 public:
-    explicit Exchange(QObject *parent = nullptr, QString api_endpoint = "N/A");
+    explicit Exchange(QObject *parent = nullptr, QString api_endpoint = "N/A", DBWrapper *dbwrapper = nullptr);
 
     void make_request(void);
 
-    float buy;
-    float sell;
-    float last;
+    DBWrapper *dbwrapper;
+
+    ExchangePrice *exchange_price;
+
+    QTimer *exchange_timer;
 
     QString api_endpoint;
 
@@ -28,6 +37,7 @@ signals:
 
 public slots:
     virtual void qnam_finished(QNetworkReply *reply) = 0;
+    virtual void tim_timeout() = 0;
 
 private:
     QNetworkAccessManager *qnam_exchange;
@@ -36,17 +46,21 @@ private:
 class BitfinexExchange : public Exchange
 {
 public:
-    BitfinexExchange(QObject *parent = nullptr, QString api_endpoint = "N/A");
+    BitfinexExchange(QObject *parent = nullptr, QString api_endpoint = "N/A", DBWrapper *dbwrapper = nullptr);
 
     void qnam_finished(QNetworkReply *reply) override;
+
+    void tim_timeout() override;
 };
 
 class BitstampExchange : public Exchange
 {
 public:
-    BitstampExchange(QObject *parent = nullptr, QString api_endpoint = "N/A");
+    BitstampExchange(QObject *parent = nullptr, QString api_endpoint = "N/A", DBWrapper *dbwrapper = nullptr);
 
     void qnam_finished(QNetworkReply *reply) override;
+
+    void tim_timeout() override;
 };
 
 class CoinbaseExchange : public Exchange
@@ -57,6 +71,8 @@ public:
     void set_api_endpoint(QString api_endpoint);
 
     void qnam_finished(QNetworkReply *reply) override;
+
+    void tim_timeout() override;
 };
 
 #endif // EXCHANGE_H
