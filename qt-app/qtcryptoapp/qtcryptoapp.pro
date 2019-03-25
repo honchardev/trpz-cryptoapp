@@ -30,12 +30,12 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     dbwrapper.cpp \
-    exchangeapidata.cpp
+    exchange.cpp
 
 HEADERS += \
         mainwindow.h \
     dbwrapper.h \
-    exchangeapidata.h
+    exchange.h
 
 FORMS += \
         mainwindow.ui

@@ -3,13 +3,8 @@
 
 #include <QMainWindow>
 
-#include <QUrl>
-#include <QNetworkReply>
-#include <QNetworkAccessManager>
-
 #include "dbwrapper.h"
-#include "exchangeapidata.h"
-
+#include "exchange.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,33 +19,18 @@ public:
     ~MainWindow();
 
 private slots:
-    void bitfinexmanagerfinished(QNetworkReply *apireply);
-    void coinbasemanagerfinished(QNetworkReply *apireply);
-    void bitstampmanagerfinished(QNetworkReply *apireply);
-
     void on_bitfinex_btn_clicked();
-    void on_coinbase_btn_clicked();
     void on_bitstamp_btn_clicked();
+    void on_coinbase_btn_clicked();
 
 private:
     Ui::MainWindow *ui;
 
     DBWrapper *dbwrapper;
 
-    BitfinexAPIData *bitfinexapidata;
-    CoinbaseAPIData *coinbaseapidata;
-    BitstampAPIData *bitstampapidata;
-
-    QNetworkAccessManager *bitfinexmanager;
-    QNetworkAccessManager *coinbasemanager;
-    QNetworkAccessManager *bitstampmanager;
-
-    QNetworkRequest bitfinexreq;
-    QNetworkRequest coinbasereq;
-    QNetworkRequest bitstampreq;
-
-    QString base;
-    QString currency;
+    Exchange *bitfinex;
+    Exchange *bitstamp;
+    Coinbase *coinbase;
 };
 
 #endif // MAINWINDOW_H
