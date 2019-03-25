@@ -77,13 +77,13 @@ bool DBWrapper::insert_value(ExchangePrice &ep)
     return false;
 }
 
-bool DBWrapper::get_exchange_prices(QString epname, QVector<ExchangePrice *> *epvector)
+bool DBWrapper::get_exchange_prices(QString ep_name, QVector<ExchangePrice *> *ep_vector)
 {
     QSqlQuery select_exchange_prices_query;
     select_exchange_prices_query.prepare("SELECT * "
                                          "FROM exchangeprices "
                                          "WHERE exchange = :exchangename;");
-    select_exchange_prices_query.bindValue(":exchangename", epname);
+    select_exchange_prices_query.bindValue(":exchangename", ep_name);
     select_exchange_prices_query.exec();
     if (select_exchange_prices_query.isActive()) {
         while (select_exchange_prices_query.next()) {
@@ -96,7 +96,7 @@ bool DBWrapper::get_exchange_prices(QString epname, QVector<ExchangePrice *> *ep
                         select_exchange_prices_query.value(6).toFloat(),      // ask
                         select_exchange_prices_query.value(7).toFloat()       // price
                         );
-            epvector->push_back(eptoadd);
+            ep_vector->push_back(eptoadd);
         }
         qDebug() << "SUCCESS select exchangeprice";
         return true;

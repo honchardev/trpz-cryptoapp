@@ -28,9 +28,9 @@ private:
 
     DBWrapper *dbwrapper;
 
-    Exchange *bitfinex;
-    Exchange *bitstamp;
-    Coinbase *coinbase;
+    BitfinexExchange *bitfinex;
+    BitstampExchange *bitstamp;
+    CoinbaseExchange *coinbase;
 };
 
 #endif // MAINWINDOW_H

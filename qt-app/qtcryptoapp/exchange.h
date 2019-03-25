@@ -1,4 +1,4 @@
-#ifndef EXCHANGE_H
+﻿#ifndef EXCHANGE_H
 #define EXCHANGE_H
 
 #include <QObject>
@@ -12,37 +12,49 @@
 class Exchange : public QObject
 {
     Q_OBJECT
+
 public:
-    Exchange(DBWrapper *dbwrapper, QString endpoint);
-    virtual ~Exchange();
+    explicit Exchange(QObject *parent = nullptr, QString api_endpoint = "N/A");
 
-    virtual bool make_request(float *buy, float *sell, float *last);
+    void make_request(void);
 
-    DBWrapper *dbwrapper;
+    float buy;
+    float sell;
+    float last;
 
-    QNetworkAccessManager *exchangemanager;
+    QString api_endpoint;
 
-    bool gotexchangeanswer;
-    QString exchangeanswer;
+private:
+    QNetworkAccessManager *qnam_exchange;
 
 public slots:
-    void exchangemanagerfinished(QNetworkReply *reply);
-
-private:
-    QString tickerapiendpoint;
+    virtual void qnam_finished(QNetworkReply *reply) = 0;
 };
 
-class Coinbase : public Exchange
+class BitfinexExchange : public Exchange
 {
 public:
-    Coinbase(DBWrapper *dbwrapper);
+    BitfinexExchange(QObject *parent = nullptr, QString api_endpoint = "N/A");
 
-    bool make_request(float *buy, float *sell, float *last) override;
+    void qnam_finished(QNetworkReply *reply) override;
+};
 
-private:
-    QString buyapiendpoint;
-    QString sellapiendpoint;
-    QString spotapiendpoint;
+class BitstampExchange : public Exchange
+{
+public:
+    BitstampExchange(QObject *parent = nullptr, QString api_endpoint = "N/A");
+
+    void qnam_finished(QNetworkReply *reply) override;
+};
+
+class CoinbaseExchange : public Exchange
+{
+public:
+    CoinbaseExchange(QObject *parent = nullptr);
+
+    void set_api_endpoint(QString api_endpoint);
+
+    void qnam_finished(QNetworkReply *reply) override;
 };
 
 #endif // EXCHANGE_H

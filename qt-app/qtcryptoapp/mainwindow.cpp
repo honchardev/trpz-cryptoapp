@@ -11,15 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     dbwrapper = new DBWrapper();
 
-    QString base("btc");
-    QString currency("usd");
-
-    QString bitfinexendpoint = QString("https://api.bitfinex.com/v1/pubticker/%1%2").arg(base).arg(currency);
-    QString bitstampendpoint = QString("https://www.bitstamp.net/api/v2/ticker/%1%2").arg(base).arg(currency);
-
-    bitfinex = new Exchange(dbwrapper, bitfinexendpoint);
-    bitstamp = new Exchange(dbwrapper, bitstampendpoint);
-    coinbase = new Coinbase(dbwrapper);
+    bitfinex = new BitfinexExchange(this, QString("https://api.bitfinex.com/v1/pubticker/btcusd"));
+    bitstamp = new BitstampExchange(this, QString("https://www.bitstamp.net/api/v2/ticker/btcusd"));
+    coinbase = new CoinbaseExchange(this);
 }
 
 MainWindow::~MainWindow()
@@ -27,33 +21,26 @@ MainWindow::~MainWindow()
     delete ui;
     delete dbwrapper;
     delete bitfinex;
-    delete bitstamp;
-    delete coinbase;
 }
 
 void MainWindow::on_bitfinex_btn_clicked()
 {
-    float buy = 0;
-    float sell = 0;
-    float last = 0;
-
-    bitfinex->make_request(&buy, &sell, &last);
+    bitfinex->make_request();
 }
 
 void MainWindow::on_bitstamp_btn_clicked()
 {
-    float buy = 0;
-    float sell = 0;
-    float last = 0;
-
-    bitstamp->make_request(&buy, &sell, &last);
+    bitstamp->make_request();
 }
 
 void MainWindow::on_coinbase_btn_clicked()
 {
-    float buy = 0;
-    float sell = 0;
-    float last = 0;
+    coinbase->set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/buy"));
+    coinbase->make_request();
 
-    coinbase->make_request(&buy, &sell, &last);
+    coinbase->set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/sell"));
+    coinbase->make_request();
+
+    coinbase->set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/spot"));
+    coinbase->make_request();
 }

@@ -2,94 +2,75 @@
 
 #include <QDebug>
 
-Exchange::Exchange(DBWrapper *dbwrapper, QString endpoint) :
-    dbwrapper(dbwrapper),
-    exchangemanager(new QNetworkAccessManager),
-    gotexchangeanswer(false),
-    exchangeanswer(QString("")),
-    tickerapiendpoint(endpoint)
+Exchange::Exchange(QObject *parent, QString api_endpoint) :
+    QObject (parent),
+    api_endpoint(api_endpoint)
 {
-    connect(exchangemanager, &QNetworkAccessManager::finished,
-            this, &Exchange::exchangemanagerfinished);
 }
 
-Exchange::~Exchange()
+void Exchange::make_request()
 {
-    delete exchangemanager;
+    qnam_exchange = new QNetworkAccessManager(this);
+    connect(qnam_exchange, &QNetworkAccessManager::finished,
+            this, &Exchange::qnam_finished);
+    qnam_exchange->get(QNetworkRequest(QUrl(api_endpoint)));
 }
 
-bool Exchange::make_request(float *buy, float *sell, float *last)
+BitfinexExchange::BitfinexExchange(QObject *parent, QString api_endpoint) :
+    Exchange (parent, api_endpoint)
 {
-    QNetworkRequest exchangereq;
-    exchangereq.setUrl(tickerapiendpoint);
-    exchangemanager->get(exchangereq);
-    if (gotexchangeanswer) {
-        gotexchangeanswer = false;
-        qDebug() << "Exchange::exchangemanagerfinished data: " << exchangeanswer;
-        // todo: parse data
-        *buy = 0.0f;
-        *sell = 0.0f;
-        *last = 0.0f;
-        qDebug() << *buy << "\t" << *sell << "\t" << *last;
-        return true;
-    }
-    return false;
 }
 
-void Exchange::exchangemanagerfinished(QNetworkReply *reply)
+void BitfinexExchange::qnam_finished(QNetworkReply *reply)
 {
     if (reply->error()) {
-        qWarning() << "coinbasemanagerfinished ERROR: " << reply->errorString();
+        qWarning() << "BitfinexExchange::qnam_finished ERROR: " << reply->errorString();
         return;
     }
-    exchangeanswer = reply->readAll();
-    gotexchangeanswer = true;
+    else {
+        // todo: parse data
+        qDebug() << reply->readAll();
+    }
+    reply->deleteLater();
 }
 
-Coinbase::Coinbase(DBWrapper *dbwrapper) :
-    Exchange (dbwrapper, QString("N/A"))
+BitstampExchange::BitstampExchange(QObject *parent, QString api_endpoint) :
+    Exchange (parent, api_endpoint)
 {
-    QString base("btc");
-    QString currency("usd");
-    buyapiendpoint = QString("https://api.coinbase.com/v2/prices/%1-%2/buy").arg(base).arg(currency);
-    sellapiendpoint = QString("https://api.coinbase.com/v2/prices/%1-%2/sell").arg(base).arg(currency);
-    spotapiendpoint = QString("https://api.coinbase.com/v2/prices/%1-%2/spot").arg(base).arg(currency);
 }
 
-bool Coinbase::make_request(float *buy, float *sell, float *last)
+void BitstampExchange::qnam_finished(QNetworkReply *reply)
 {
-    QNetworkRequest exchangereq;
-
-    exchangereq.setUrl(buyapiendpoint);
-    exchangemanager->get(exchangereq);
-    if (gotexchangeanswer) {
-        gotexchangeanswer = false;
-        qDebug() << "Coinbase::make_request buy data: " << exchangeanswer;
-        // todo: parse data
-        *buy = 0.0f;
-        qDebug() << *buy;
+    if (reply->error()) {
+        qWarning() << "BitstampExchange::qnam_finished ERROR: " << reply->errorString();
+        return;
     }
-
-    exchangereq.setUrl(sellapiendpoint);
-    exchangemanager->get(exchangereq);
-    if (gotexchangeanswer) {
-        gotexchangeanswer = false;
-        qDebug() << "Coinbase::make_request sell data: " << exchangeanswer;
+    else {
         // todo: parse data
-        *sell = 0.0f;
-        qDebug() << *sell;
+        qDebug() << reply->readAll();
     }
+    reply->deleteLater();
+}
 
-    exchangereq.setUrl(spotapiendpoint);
-    exchangemanager->get(exchangereq);
-    if (gotexchangeanswer) {
-        gotexchangeanswer = false;
-        qDebug() << "Coinbase::make_request last data: " << exchangeanswer;
+CoinbaseExchange::CoinbaseExchange(QObject *parent) :
+    Exchange (parent)
+{
+}
+
+void CoinbaseExchange::set_api_endpoint(QString api_endpoint)
+{
+    this->api_endpoint = api_endpoint;
+}
+
+void CoinbaseExchange::qnam_finished(QNetworkReply *reply)
+{
+    if (reply->error()) {
+        qWarning() << "CoinbaseExchange::qnam_finished ERROR: " << reply->errorString();
+        return;
+    }
+    else {
         // todo: parse data
-        *last = 0.0f;
-        qDebug() << *last;
-        return true;
+        qDebug() << reply->readAll();
     }
-
-    return false;
+    reply->deleteLater();
 }

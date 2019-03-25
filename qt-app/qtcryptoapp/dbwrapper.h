@@ -35,7 +35,7 @@ public:
     DBWrapper();
 
     bool insert_value(ExchangePrice &ep);
-    bool get_exchange_prices(QString epname, QVector<ExchangePrice *> *epvector);
+    bool get_exchange_prices(QString ep_name, QVector<ExchangePrice *> *ep_vector);
 
 private:
     bool open_conn(void);
