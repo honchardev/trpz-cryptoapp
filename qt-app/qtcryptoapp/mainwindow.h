@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include "cmcscrapper.h"
 #include "dbwrapper.h"
 #include "exchange.h"
 
@@ -25,6 +26,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    CMCScrapper *cmcscrapper;
 
     DBWrapper *dbwrapper;
 

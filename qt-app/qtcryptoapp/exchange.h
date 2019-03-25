@@ -24,11 +24,13 @@ public:
 
     QString api_endpoint;
 
-private:
-    QNetworkAccessManager *qnam_exchange;
+signals:
 
 public slots:
     virtual void qnam_finished(QNetworkReply *reply) = 0;
+
+private:
+    QNetworkAccessManager *qnam_exchange;
 };
 
 class BitfinexExchange : public Exchange

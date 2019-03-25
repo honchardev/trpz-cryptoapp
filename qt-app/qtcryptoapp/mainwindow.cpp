@@ -9,11 +9,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    cmcscrapper = new CMCScrapper(this);
+
     dbwrapper = new DBWrapper();
 
     bitfinex = new BitfinexExchange(this, QString("https://api.bitfinex.com/v1/pubticker/btcusd"));
     bitstamp = new BitstampExchange(this, QString("https://www.bitstamp.net/api/v2/ticker/btcusd"));
     coinbase = new CoinbaseExchange(this);
+
+    cmcscrapper->make_request();
 }
 
 MainWindow::~MainWindow()
