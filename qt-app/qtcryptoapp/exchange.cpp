@@ -143,6 +143,7 @@ void CoinbaseExchange::qnam_finished(QNetworkReply *reply)
         }
         if (emit_receive_ok) {
             emit(data_receive_ok());
+            qDebug() << "DEBUG: emitted from coinbase network handler";
         }
     }
     reply->deleteLater();

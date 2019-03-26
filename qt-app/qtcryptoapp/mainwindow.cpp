@@ -131,30 +131,99 @@ void MainWindow::updategui_cmc_block_conn_fail()
 
 void MainWindow::updategui_bitfinex_block_conn_ok()
 {
+    webconnstatus_lbl->setText(QString("Connection: OK"));
+    webconnstatus_lbl->setStyleSheet("QLabel {color : green}");
+    ui->bitfinex_updrate->setStyleSheet("QLabel {color : green}");
 
+    // todo: save new data entry + update chart
 }
 
 void MainWindow::updategui_bitfinex_block_conn_fail()
 {
+    webconnstatus_lbl->setText(QString("Connection: FAIL"));
+    webconnstatus_lbl->setStyleSheet("QLabel {color : red}");
+    ui->bitfinex_updrate->setStyleSheet("QLabel {color : red}");
 
+    // todo: save prev data entry to the chart + history.
 }
 
 void MainWindow::updategui_bitstamp_block_conn_ok()
 {
+    webconnstatus_lbl->setText(QString("Connection: OK"));
+    webconnstatus_lbl->setStyleSheet("QLabel {color : green}");
+    ui->bitstamp_updrate->setStyleSheet("QLabel {color : green}");
 
+    // todo: save new data entry + update chart
 }
 
 void MainWindow::updategui_bitstamp_block_conn_fail()
 {
+    webconnstatus_lbl->setText(QString("Connection: FAIL"));
+    webconnstatus_lbl->setStyleSheet("QLabel {color : red}");
+    ui->bitstamp_updrate->setStyleSheet("QLabel {color : red}");
 
+    // todo: save prev data entry to the chart + history.
 }
 
 void MainWindow::updategui_coinbase_block_conn_ok()
 {
+    webconnstatus_lbl->setText(QString("Connection: OK"));
+    webconnstatus_lbl->setStyleSheet("QLabel {color : green}");
+    ui->coinbase_updrate->setStyleSheet("QLabel {color : green}");
 
+    // todo: save new data entry + update chart
 }
 
 void MainWindow::updategui_coinbase_block_conn_fail()
+{
+    webconnstatus_lbl->setText(QString("Connection: FAIL"));
+    webconnstatus_lbl->setStyleSheet("QLabel {color : red}");
+    ui->coinbase_updrate->setStyleSheet("QLabel {color : red}");
+
+    // todo: save prev data entry to the chart + history.
+}
+
+void MainWindow::on_actionHelp_triggered()
+{
+    QMessageBox help_msgbox;
+    QString help_msg = "<p align='center'>For any questions related to the application "
+                        "please contact the developer<br>t.me/ruki_wgoru_ce_policia</p>";
+    help_msgbox.setWindowTitle("Help");
+    help_msgbox.setText(help_msg);
+    help_msgbox.setStandardButtons(QMessageBox::Ok);
+    help_msgbox.exec();
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox about_msgbox;
+    QString about_msg = "<p align='center'>CryptoData<br>"
+                        "1.0.0<br><br>"
+                        "CryptoData is a TRPZ project for Windows, Linux and MacOS<br><br>"
+                        "Credits: created by Maksym Honchar<br>"
+                        "Kyiv 2019</p>";
+    about_msgbox.setWindowTitle("About");
+    about_msgbox.setText(about_msg);
+    about_msgbox.addButton(QMessageBox::Ok);
+    about_msgbox.exec();
+}
+
+void MainWindow::on_actionQuit_triggered()
+{
+    this->close();
+}
+
+void MainWindow::on_actionText_triggered()
+{
+
+}
+
+void MainWindow::on_actionCSV_triggered()
+{
+
+}
+
+void MainWindow::on_actionAs_png_image_triggered()
 {
 
 }

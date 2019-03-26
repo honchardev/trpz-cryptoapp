@@ -41,6 +41,14 @@ private slots:
     void updategui_coinbase_block_conn_ok();
     void updategui_coinbase_block_conn_fail();
 
+    void on_actionHelp_triggered();
+    void on_actionAbout_triggered();
+    void on_actionQuit_triggered();
+
+    void on_actionText_triggered();
+    void on_actionCSV_triggered();
+    void on_actionAs_png_image_triggered();
+
 private:
     Ui::MainWindow *ui;
 
