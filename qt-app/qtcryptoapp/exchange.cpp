@@ -9,6 +9,8 @@ Exchange::Exchange(QObject *parent, QString api_endpoint, DBWrapper *dbwrapper) 
     api_endpoint(api_endpoint)
 {
     exchange_timer = new QTimer(this);
+    connect(exchange_timer, SIGNAL(timeout()),
+            this, SLOT(tim_timeout()));
 }
 
 void Exchange::make_request()
@@ -22,32 +24,30 @@ void Exchange::make_request()
 BitfinexExchange::BitfinexExchange(QObject *parent, QString api_endpoint, DBWrapper *dbwrapper) :
     Exchange (parent, api_endpoint, dbwrapper)
 {
-    connect(exchange_timer, SIGNAL(timeout()),
-            this, SLOT(tim_timeout()));
-    exchange_timer->start(15 * 1000);
 }
 
 void BitfinexExchange::qnam_finished(QNetworkReply *reply)
 {
     if (reply->error()) {
+        emit(data_receive_fail());
         qWarning() << "BitfinexExchange::qnam_finished ERROR: " << reply->errorString();
-        return;
     }
     else {
         QString bitfinex_response = reply->readAll();
         QJsonDocument json_response_doc = QJsonDocument::fromJson(bitfinex_response.toUtf8());
         QJsonObject json_response_obj = json_response_doc.object();
         exchange_price = new ExchangePrice(
-            QDateTime::currentDateTime(),
-            "bitfinex",
-            "btc",
-            "usd",
-            static_cast<float>(json_response_obj["bid"].toString().toDouble()),
-            static_cast<float>(json_response_obj["ask"].toString().toDouble()),
-            static_cast<float>(json_response_obj["last_price"].toString().toDouble())
-        );
+                    QDateTime::currentDateTime(),
+                    "bitfinex",
+                    "btc",
+                    "usd",
+                    static_cast<float>(json_response_obj["bid"].toString().toDouble()),
+                static_cast<float>(json_response_obj["ask"].toString().toDouble()),
+                static_cast<float>(json_response_obj["last_price"].toString().toDouble())
+                );
         dbwrapper->insert_value(*exchange_price);
         delete exchange_price;
+        emit(data_receive_ok());
     }
     reply->deleteLater();
 }
@@ -60,32 +60,30 @@ void BitfinexExchange::tim_timeout()
 BitstampExchange::BitstampExchange(QObject *parent, QString api_endpoint, DBWrapper *dbwrapper) :
     Exchange (parent, api_endpoint, dbwrapper)
 {
-    connect(exchange_timer, SIGNAL(timeout()),
-            this, SLOT(tim_timeout()));
-    exchange_timer->start(15 * 1000);
 }
 
 void BitstampExchange::qnam_finished(QNetworkReply *reply)
 {
     if (reply->error()) {
+        emit(data_receive_fail());
         qWarning() << "BitstampExchange::qnam_finished ERROR: " << reply->errorString();
-        return;
     }
     else {
         QString bitstamp_response = reply->readAll();
         QJsonDocument json_response_doc = QJsonDocument::fromJson(bitstamp_response.toUtf8());
         QJsonObject json_response_obj = json_response_doc.object();
         exchange_price = new ExchangePrice(
-            QDateTime::currentDateTime(),
-            "bitstamp",
-            "btc",
-            "usd",
-            static_cast<float>(json_response_obj["bid"].toString().toDouble()),
-            static_cast<float>(json_response_obj["ask"].toString().toDouble()),
-            static_cast<float>(json_response_obj["last"].toString().toDouble())
-        );
+                    QDateTime::currentDateTime(),
+                    "bitstamp",
+                    "btc",
+                    "usd",
+                    static_cast<float>(json_response_obj["bid"].toString().toDouble()),
+                static_cast<float>(json_response_obj["ask"].toString().toDouble()),
+                static_cast<float>(json_response_obj["last"].toString().toDouble())
+                );
         dbwrapper->insert_value(*exchange_price);
         delete exchange_price;
+        emit(data_receive_ok());
     }
     reply->deleteLater();
 }
@@ -96,11 +94,9 @@ void BitstampExchange::tim_timeout()
 }
 
 CoinbaseExchange::CoinbaseExchange(QObject *parent, DBWrapper *dbwrapper) :
-    Exchange (parent, "NA", dbwrapper)
+    Exchange (parent, "NA", dbwrapper),
+    emit_receive_ok(false)
 {
-    connect(exchange_timer, SIGNAL(timeout()),
-            this, SLOT(tim_timeout()));
-    exchange_timer->start(15 * 1000);
 }
 
 void CoinbaseExchange::set_api_endpoint(QString api_endpoint)
@@ -111,8 +107,8 @@ void CoinbaseExchange::set_api_endpoint(QString api_endpoint)
 void CoinbaseExchange::qnam_finished(QNetworkReply *reply)
 {
     if (reply->error()) {
+        emit(data_receive_fail());
         qWarning() << "CoinbaseExchange::qnam_finished ERROR: " << reply->errorString();
-        return;
     }
     else {
         QString coinbase_response = reply->readAll();
@@ -121,14 +117,14 @@ void CoinbaseExchange::qnam_finished(QNetworkReply *reply)
         QJsonObject json_coinbase_data = json_response_obj["data"].toObject();
         if (!exchange_price) {
             exchange_price = new ExchangePrice(
-                QDateTime::currentDateTime(),
-                "coinbase",
-                "btc",
-                "usd",
-                0.0f,
-                0.0f,
-                0.0f
-            );
+                        QDateTime::currentDateTime(),
+                        "coinbase",
+                        "btc",
+                        "usd",
+                        0.0f,
+                        0.0f,
+                        0.0f
+                        );
         }
         QString reply_url = reply->url().toString();
         if (reply_url.contains("spot")) {
@@ -145,18 +141,23 @@ void CoinbaseExchange::qnam_finished(QNetworkReply *reply)
             delete exchange_price;
             exchange_price = nullptr;
         }
+        if (emit_receive_ok) {
+            emit(data_receive_ok());
+        }
     }
     reply->deleteLater();
 }
 
 void CoinbaseExchange::tim_timeout()
 {
+    emit_receive_ok = false;
     set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/buy"));
     make_request();
 
     set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/sell"));
     make_request();
 
+    emit_receive_ok = true;
     set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/spot"));
     make_request();
 }

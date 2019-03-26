@@ -14,12 +14,13 @@
 class CMCScrapper : public QObject
 {
     Q_OBJECT
+
 public:
     explicit CMCScrapper(QObject *parent = nullptr);
 
     void make_request(void);
 
-    QTimer *cmc_timer;
+    void start_timer(void);
 
     QString market_cap;
     QString price;
@@ -28,12 +29,17 @@ public:
     QString change_24h;
 
 signals:
+    void data_receive_ok();
+    void data_receive_fail();
 
 public slots:
     void qnam_finished(QNetworkReply *reply);
+
     void cmc_timeout();
 
 private:
+    QTimer *cmc_timer;
+
     QNetworkAccessManager *qnam_cmc;
 
     QRegularExpression re_cmc;

@@ -6,7 +6,6 @@ CMCScrapper::CMCScrapper(QObject *parent) :
     cmc_timer = new QTimer(this);
     connect(cmc_timer, SIGNAL(timeout()),
             this, SLOT(cmc_timeout()));
-    cmc_timer->start(60 * 1000);
 }
 
 void CMCScrapper::make_request()
@@ -17,11 +16,16 @@ void CMCScrapper::make_request()
     qnam_cmc->get(QNetworkRequest(QUrl(QString("https://coinmarketcap.com"))));
 }
 
+void CMCScrapper::start_timer()
+{
+    cmc_timer->start(60 * 1000);
+}
+
 void CMCScrapper::qnam_finished(QNetworkReply *reply)
 {
     if (reply->error()) {
+        emit(data_receive_fail());
         qWarning() << "CMCScrapper::qnam_finished ERROR: " << reply->errorString();
-        return;
     }
     else {
         QString cmc_data = reply->readAll();
@@ -55,6 +59,7 @@ void CMCScrapper::qnam_finished(QNetworkReply *reply)
         if (change_match.hasMatch()) {
             change_24h = change_match.captured(3);
         }
+        emit(data_receive_ok());
         qDebug() << "updated cmcscrapper";
     }
     reply->deleteLater();

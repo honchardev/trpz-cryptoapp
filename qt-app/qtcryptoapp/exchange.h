@@ -1,4 +1,4 @@
-﻿#ifndef EXCHANGE_H
+#ifndef EXCHANGE_H
 #define EXCHANGE_H
 
 #include <QObject>
@@ -34,6 +34,8 @@ public:
     QString api_endpoint;
 
 signals:
+    void data_receive_ok();
+    void data_receive_fail();
 
 public slots:
     virtual void qnam_finished(QNetworkReply *reply) = 0;
@@ -73,6 +75,8 @@ public:
     void qnam_finished(QNetworkReply *reply) override;
 
     void tim_timeout() override;
+
+    bool emit_receive_ok;
 };
 
 #endif // EXCHANGE_H

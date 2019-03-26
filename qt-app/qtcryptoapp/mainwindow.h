@@ -5,6 +5,10 @@
 
 #include <QTimer>
 
+#include <QLabel>
+#include <QFrame>
+#include <QMessageBox>
+
 #include "cmcscrapper.h"
 #include "dbwrapper.h"
 #include "exchange.h"
@@ -22,16 +26,31 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_bitfinex_btn_clicked();
-    void on_bitstamp_btn_clicked();
-    void on_coinbase_btn_clicked();
+    void updategui_db_conn_ok();
+    void updategui_db_conn_fail();
+
+    void updategui_cmc_block_conn_ok();
+    void updategui_cmc_block_conn_fail();
+
+    void updategui_bitfinex_block_conn_ok();
+    void updategui_bitfinex_block_conn_fail();
+
+    void updategui_bitstamp_block_conn_ok();
+    void updategui_bitstamp_block_conn_fail();
+
+    void updategui_coinbase_block_conn_ok();
+    void updategui_coinbase_block_conn_fail();
 
 private:
     Ui::MainWindow *ui;
 
-    CMCScrapper *cmcscrapper;
+    QLabel *webconnstatus_lbl;
+    QLabel *dbconnstatus_lbl;
+    QFrame *statusbar_ln;
 
     DBWrapper *dbwrapper;
+
+    CMCScrapper *cmcscrapper;
 
     BitfinexExchange *bitfinex;
     BitstampExchange *bitstamp;

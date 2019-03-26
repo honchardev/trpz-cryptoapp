@@ -1,6 +1,8 @@
 #ifndef DBWRAPPER_H
 #define DBWRAPPER_H
 
+#include <QObject>
+
 #include <QVector>
 #include <QDateTime>
 
@@ -29,24 +31,34 @@ public:
     float price;
 };
 
-class DBWrapper
+class DBWrapper : public QObject
 {
+    Q_OBJECT
+
 public:
-    DBWrapper();
+    explicit DBWrapper(QObject *parent = nullptr);
 
     bool insert_value(ExchangePrice &ep);
+
     bool get_exchange_prices(QString ep_name, QVector<ExchangePrice *> *ep_vector);
+
+    bool isalive(void);
+
+signals:
+    void db_conn_ok();
+    void db_conn_fail();
+
+private slots:
 
 private:
     bool open_conn(void);
+
     bool create_tables(void);
 
-    const QString DRIVER;
-    const QString DB_FILE_PATH;
+    QString DRIVER;
+    QString DB_FILE_PATH;
 
     QSqlDatabase db_conn;
 };
-
-
 
 #endif // DBWRAPPER_H

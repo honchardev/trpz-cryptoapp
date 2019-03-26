@@ -2,10 +2,11 @@
 
 #include <QDebug>
 
-DBWrapper::DBWrapper() :
-    DRIVER("QSQLITE"),
-    DB_FILE_PATH("cryptodb.sqlite")
+DBWrapper::DBWrapper(QObject *parent) :
+    QObject(parent)
 {
+    DRIVER = QString("QSQLITE");
+    DB_FILE_PATH = QString("cryptodb.sqlite");
     open_conn();
     create_tables();
 }
@@ -26,10 +27,12 @@ bool DBWrapper::open_conn()
         db_conn = QSqlDatabase::addDatabase(DRIVER);
         db_conn.setDatabaseName(DB_FILE_PATH);
         if(db_conn.open()) {
+            emit(db_conn_ok());
             qDebug() << "SUCCESS DB open connection";
             return true;
         }
     }
+    emit(db_conn_fail());
     qWarning() << "ERROR open connection db_conn: " << db_conn.lastError();
     return false;
 }
@@ -49,9 +52,11 @@ bool DBWrapper::create_tables()
                                ");");
     create_table_query.exec();
     if (create_table_query.isActive()) {
+        emit(db_conn_ok());
         qDebug() << "SUCCESS DB create table exchangeprices";
         return true;
     }
+    emit(db_conn_fail());
     qWarning() << "ERROR create table exchangeprices: " << create_table_query.lastError().text();
     return false;
 }
@@ -70,9 +75,11 @@ bool DBWrapper::insert_value(ExchangePrice &ep)
     insert_price_query.bindValue(":price", ep.price);
     insert_price_query.exec();
     if (insert_price_query.isActive()) {
+        emit(db_conn_ok());
         qDebug() << "SUCCESS insert exchangeprice";
         return true;
     }
+    emit(db_conn_fail());
     qWarning() << "ERROR inserting exchangeprice: " << insert_price_query.lastError().text();
     return false;
 }
@@ -98,10 +105,27 @@ bool DBWrapper::get_exchange_prices(QString ep_name, QVector<ExchangePrice *> *e
                         );
             ep_vector->push_back(eptoadd);
         }
+        emit(db_conn_ok());
         qDebug() << "SUCCESS select exchangeprice";
         return true;
     }
+    emit(db_conn_fail());
     qWarning() << "ERROR select exchangeprice: " << select_exchange_prices_query.lastError().text();
+    return false;
+}
+
+bool DBWrapper::isalive()
+{
+    QSqlQuery testing_isalive_select_query;
+    testing_isalive_select_query.prepare("SELECT * FROM exchangeprices;");
+    testing_isalive_select_query.exec();
+    if (testing_isalive_select_query.isActive()) {
+        emit(db_conn_ok());
+        qDebug() << "SUCCESS DB isalive check";
+        return true;
+    }
+    emit(db_conn_fail());
+    qWarning() << "ERROR isalive check" << testing_isalive_select_query.lastError().text();
     return false;
 }
 
