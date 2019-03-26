@@ -10,6 +10,12 @@
     <height>1311</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>752</width>
+    <height>575</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>CryptoData</string>
   </property>
@@ -557,7 +563,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
-             <widget class="QLabel" name="coindeskdescrtxt_lbl">
+             <widget class="QLabel" name="coinbaesdescrtxt_lbl">
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -583,7 +589,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="coindesksourcetxt_lbl">
+             <widget class="QLabel" name="coinbasesourcetxt_lbl">
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -609,7 +615,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QWidget" name="coindeskdata_wdgt" native="true">
+           <widget class="QWidget" name="coinbasedata_wdgt" native="true">
             <property name="minimumSize">
              <size>
               <width>650</width>

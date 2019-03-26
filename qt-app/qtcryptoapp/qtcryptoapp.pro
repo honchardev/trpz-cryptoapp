@@ -31,13 +31,15 @@ SOURCES += \
         mainwindow.cpp \
     dbwrapper.cpp \
     exchange.cpp \
-    cmcscrapper.cpp
+    cmcscrapper.cpp \
+    chart.cpp
 
 HEADERS += \
         mainwindow.h \
     dbwrapper.h \
     exchange.h \
-    cmcscrapper.h
+    cmcscrapper.h \
+    chart.h
 
 FORMS += \
         mainwindow.ui

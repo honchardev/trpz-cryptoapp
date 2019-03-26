@@ -9,6 +9,9 @@
 #include <QFrame>
 #include <QMessageBox>
 
+#include <QVector>
+
+#include "chart.h"
 #include "cmcscrapper.h"
 #include "dbwrapper.h"
 #include "exchange.h"
@@ -55,6 +58,10 @@ private:
     QLabel *webconnstatus_lbl;
     QLabel *dbconnstatus_lbl;
     QFrame *statusbar_ln;
+
+    Chart *bitfinex_chart;
+    Chart *bitstamp_chart;
+    Chart *coinbase_chart;
 
     DBWrapper *dbwrapper;
 

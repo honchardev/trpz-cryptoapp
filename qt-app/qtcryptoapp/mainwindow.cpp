@@ -17,6 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     dbconnstatus_lbl = new QLabel("DB Connection: No data", this);
     statusBar()->addWidget(dbconnstatus_lbl);
 
+    bitfinex_chart = new Chart(ui->bitfinexdata_wdgt);
+    bitstamp_chart = new Chart(ui->bitstampdata_wdgt);
+    coinbase_chart = new Chart(ui->coinbasedata_wdgt);
+
     dbwrapper = new DBWrapper(this);
     connect(dbwrapper, &DBWrapper::db_conn_ok,
             this, &MainWindow::updategui_db_conn_ok);
@@ -54,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
         // don't care about the network conn status
 
         // todo: fill up graph with make_request for each exchange
-        // note: handle coindesk x3 requests
+        // note: handle coinbase x3 requests
 
         // todo: start timers for cmcscrapper & 3 charts
         cmcscrapper->start_timer();
@@ -135,6 +139,12 @@ void MainWindow::updategui_bitfinex_block_conn_ok()
     webconnstatus_lbl->setStyleSheet("QLabel {color : green}");
     ui->bitfinex_updrate->setStyleSheet("QLabel {color : green}");
 
+    QVector<float> bitfinex_data({
+                                     bitfinex->exchange_price->bid,
+                                     bitfinex->exchange_price->ask,
+                                     bitfinex->exchange_price->price
+                                 });
+//    bitfinex_chart->points_data.append(bitfinex_data);
     // todo: save new data entry + update chart
 }
 
@@ -187,7 +197,7 @@ void MainWindow::on_actionHelp_triggered()
 {
     QMessageBox help_msgbox;
     QString help_msg = "<p align='center'>For any questions related to the application "
-                        "please contact the developer<br>t.me/ruki_wgoru_ce_policia</p>";
+                       "please contact the developer<br>t.me/ruki_wgoru_ce_policia</p>";
     help_msgbox.setWindowTitle("Help");
     help_msgbox.setText(help_msg);
     help_msgbox.setStandardButtons(QMessageBox::Ok);
