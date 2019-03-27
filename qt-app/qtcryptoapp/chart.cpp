@@ -4,10 +4,27 @@
 
 QT_CHARTS_USE_NAMESPACE
 
-Chart::Chart(QWidget *chart_parent)
+Chart::Chart(QWidget *parent_widget) :
+    MAX_POINTS_ON_GRAPH(25)
 {
-    // todo: fillup 20 values & shift when updating vector
+    QDateTime current_date = QDateTime::currentDateTime();
+    for (int i = 0; i < MAX_POINTS_ON_GRAPH; i++) {
+        points_x_data.push_back(current_date.addSecs(-5 * i));
+        points_y_data.push_back(QList< float >({-1, 1, 0}));
+    }
+    setup_chart();
+    gui_setup_chart(parent_widget);
+}
 
+void Chart::add_point(float bid, float ask, float price)
+{
+    points_y_data.push_back(QList<float>({bid, ask, price}));
+
+    // todo: shift when updating QList
+}
+
+void Chart::setup_chart()
+{
     grid_layout = new QGridLayout();
     grid_layout->setMargin(0);
 
@@ -34,7 +51,6 @@ Chart::Chart(QWidget *chart_parent)
     axisX->setFormat("hh:mm:ss");
     axisX->setTitleText("Time");
     axisX->setTitleFont(QFont("Consolas", 8, 1, true));
-    axisX->setMax(QDateTime::currentDateTime());
     chart->addAxis(axisX, Qt::AlignBottom);
     bid_series->attachAxis(axisX);
     ask_series->attachAxis(axisX);
@@ -42,7 +58,7 @@ Chart::Chart(QWidget *chart_parent)
 
     axisY = new QtCharts::QValueAxis();
     axisY->setLabelFormat("%.02f");
-    axisY->setTitleText("Value USD");
+    axisY->setTitleText("Value, USD");
     axisY->setTitleFont(QFont("Consolas", 8, 1, true));
     chart->addAxis(axisY, Qt::AlignLeft);
     bid_series->attachAxis(axisY);
@@ -51,17 +67,31 @@ Chart::Chart(QWidget *chart_parent)
 
     chart->legend()->setAlignment(Qt::AlignLeft);
 
-    chart_view = new QtCharts::QChartView(chart, chart_parent);
-    chart_view->setRenderHint(QPainter::Antialiasing);
+    for (int i = 0; i < points_x_data.length(); i++) {
+//        qDebug() << points_x_data;
+    }
+    qDebug() << "??";
 
-    chart_parent->setLayout(grid_layout);
-    chart_parent->layout()->addWidget(chart_view);
+    QDateTime current_date = QDateTime::currentDateTime();
+    for (int i = 0; i < MAX_POINTS_ON_GRAPH; i++) {
+        bid_series->append(current_date.addSecs(-5 * i).toMSecsSinceEpoch(), i-20);
+        ask_series->append(current_date.addSecs(-5 * i).toMSecsSinceEpoch(), i+20);
+        price_series->append(current_date.addSecs(-5 * i).toMSecsSinceEpoch(), i);
+        qDebug() << i << points_x_data.takeAt(i);
+        //        bid_series->append(points_x_data->takeAt(0).toMSecsSinceEpoch(),
+        //                           static_cast<qreal>(points_y_data->takeAt(i).takeAt(0)));
+        //        ask_series->append(points_x_data->takeAt(0).toMSecsSinceEpoch(),
+        //                           static_cast<qreal>(points_y_data->takeAt(i).takeAt(1)));
+        //        price_series->append(points_x_data->takeAt(0).toMSecsSinceEpoch(),
+        //                           static_cast<qreal>(points_y_data->takeAt(i).takeAt(2)));
+    }
 }
 
-void Chart::add_point(float bid, float ask, float price)
+void Chart::gui_setup_chart(QWidget *parent_widget)
 {
-    QVector<float> point_to_add({bid, ask, price});
-    points_data.append(point_to_add);
+    chart_view = new QtCharts::QChartView(chart, parent_widget);
+    chart_view->setRenderHint(QPainter::Antialiasing);
 
-//    bid_series->append()
+    parent_widget->setLayout(grid_layout);
+    parent_widget->layout()->addWidget(chart_view);
 }

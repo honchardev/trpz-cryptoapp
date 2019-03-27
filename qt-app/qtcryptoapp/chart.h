@@ -1,9 +1,11 @@
-#ifndef CHART_H
+﻿#ifndef CHART_H
 #define CHART_H
+
+#include <QDateTime>
 
 #include <QWidget>
 
-#include <QVector>
+#include <QList>
 
 #include <QGridLayout>
 #include <QtCharts>
@@ -11,13 +13,17 @@
 class Chart
 {
 public:
-    Chart(QWidget *chart_parent);
+    Chart(QWidget *parent_widget);
 
-    QVector< QVector<float> > points_data;
+    QList< QList<float> > points_y_data;
+    QList< QDateTime > points_x_data;
 
     void add_point(float bid, float ask, float price);
 
 private:
+    void setup_chart(void);
+    void gui_setup_chart(QWidget *parent_widget);
+
     QtCharts::QChart *chart;
     QtCharts::QChartView *chart_view;
 
@@ -29,6 +35,8 @@ private:
     QtCharts::QLineSeries *price_series;
 
     QGridLayout *grid_layout;
+
+    QString MAX_POINTS_ON_GRAPH;
 };
 
 #endif // CHART_H
