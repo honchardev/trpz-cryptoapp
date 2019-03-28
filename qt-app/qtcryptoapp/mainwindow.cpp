@@ -324,9 +324,9 @@ void MainWindow::on_actionCSV_triggered()
                                                         tr("Select a directory to save CSV files"),
                                                         "");
 
-    QString bitfinex_txt_path(QString("%1/bitfinex_csv_%2.csv").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
-    QString bitstamp_txt_path(QString("%1/bitstamp_csv_%2.csv").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
-    QString coinbase_txt_path(QString("%1/coinbase_csv_%2.csv").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+    QString bitfinex_txt_path(QString("%1/bitfinex_csv_%2.csv").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss")));
+    QString bitstamp_txt_path(QString("%1/bitstamp_csv_%2.csv").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss")));
+    QString coinbase_txt_path(QString("%1/coinbase_csv_%2.csv").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss")));
 
     QFile bitfinex_txt_file(bitfinex_txt_path);
     QFile bitstamp_txt_file(bitstamp_txt_path);
@@ -400,9 +400,9 @@ void MainWindow::on_actionAs_png_image_triggered()
                                                         tr("Select a directory to save PNG images"),
                                                         "");
 
-    QString bitfinex_img_path(QString("%1/bitfinex_img_%2.png").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
-    QString bitstamp_img_path(QString("%1/bitstamp_img_%2.png").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
-    QString coinbase_img_path(QString("%1/coinbase_img_%2.png").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+    QString bitfinex_img_path(QString("%1/bitfinex_img_%2.png").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss")));
+    QString bitstamp_img_path(QString("%1/bitstamp_img_%2.png").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss")));
+    QString coinbase_img_path(QString("%1/coinbase_img_%2.png").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss")));
 
     QFile bitfinex_img_file(bitfinex_img_path);
     QFile bitstamp_img_file(bitstamp_img_path);
