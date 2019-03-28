@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QFrame>
 #include <QMessageBox>
+#include <QFileDialog>
 
 #include <QVector>
 

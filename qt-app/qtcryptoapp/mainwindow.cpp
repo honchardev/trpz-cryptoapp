@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QDebug>
@@ -241,15 +241,189 @@ void MainWindow::on_actionQuit_triggered()
 
 void MainWindow::on_actionText_triggered()
 {
+    QString dirname = QFileDialog::getExistingDirectory(this,
+                                                        tr("Select a directory to save TXT files"),
+                                                        "");
 
+    QString bitfinex_txt_path(QString("%1/bitfinex_txt_%2.txt").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+    QString bitstamp_txt_path(QString("%1/bitstamp_txt_%2.txt").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+    QString coinbase_txt_path(QString("%1/coinbase_txt_%2.txt").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+
+    QFile bitfinex_txt_file(bitfinex_txt_path);
+    QFile bitstamp_txt_file(bitstamp_txt_path);
+    QFile coinbase_txt_file(coinbase_txt_path);
+
+    if (!bitfinex_txt_file.open(QIODevice::WriteOnly|QFile::WriteOnly)) {
+        QMessageBox::warning(nullptr, "Could not save bitfinex TXT file", QObject::tr( "\nCould not save bitfinex TXT file on disk"));
+    }
+    else {
+        QTextStream bitfinex_stream(&bitfinex_txt_file);
+        bitfinex_stream << "BITFINEX PLOT DATA\n\nTIME\tBID\tASK\tLAST\n";
+        QList<double> bitfinex_keys_values = bitfinex_chart->keys->toList();
+        QList<double> bitfinex_bid_values = bitfinex_chart->bid_values->toList();
+        QList<double> bitfinex_ask_values = bitfinex_chart->ask_values->toList();
+        QList<double> bitfinex_price_values = bitfinex_chart->price_values->toList();
+        for (int i = 0; i < bitfinex_keys_values.length(); i++) {
+            double bid_value = bitfinex_bid_values[i];
+            double ask_value = bitfinex_ask_values[i];
+            double price_value = bitfinex_price_values[i];
+            if (static_cast<int>(bid_value) != -1 && static_cast<int>(ask_value) != -2 && static_cast<int>(price_value) != -3) {
+                bitfinex_stream << i << QDateTime::fromTime_t(static_cast<uint>(bitfinex_keys_values[i])).toString("yyyy-MM-dd hh:mm:ss") <<
+                                   "\t" << bid_value << "\t" << ask_value << "\t" << price_value << endl;
+            }
+        }
+        bitfinex_stream << "FINISH" << endl;
+    }
+    if (!bitstamp_txt_file.open(QIODevice::WriteOnly|QFile::WriteOnly)) {
+        QMessageBox::warning(nullptr, "Could not save bitstamp TXT file", QObject::tr( "\nCould not save bitstamp TXT file on disk"));
+    }
+    else {
+        QTextStream bitstamp_stream(&bitstamp_txt_file);
+        bitstamp_stream << "BITSTAMP PLOT DATA\n\nTIME\tBID\tASK\tLAST\n";
+        QList<double> bitstamp_keys_values = bitstamp_chart->keys->toList();
+        QList<double> bitstamp_bid_values = bitstamp_chart->bid_values->toList();
+        QList<double> bitstamp_ask_values = bitstamp_chart->ask_values->toList();
+        QList<double> bitstamp_price_values = bitstamp_chart->price_values->toList();
+        for (int i = 0; i < bitstamp_keys_values.length(); i++) {
+            double bid_value = bitstamp_bid_values[i];
+            double ask_value = bitstamp_ask_values[i];
+            double price_value = bitstamp_price_values[i];
+            if (static_cast<int>(bid_value) != -1 && static_cast<int>(ask_value) != -2 && static_cast<int>(price_value) != -3) {
+                bitstamp_stream << i << QDateTime::fromTime_t(static_cast<uint>(bitstamp_keys_values[i])).toString("yyyy-MM-dd hh:mm:ss") <<
+                                   "\t" << bid_value << "\t" << ask_value << "\t" << price_value << endl;
+            }
+        }
+        bitstamp_stream << "FINISH" << endl;
+    }
+    if (!coinbase_txt_file.open(QIODevice::WriteOnly|QFile::WriteOnly)) {
+        QMessageBox::warning(nullptr, "Could not save coinbase TXT file", QObject::tr( "\nCould not save coinbase TXT file on disk"));
+    }
+    else {
+        QTextStream coinbase_stream(&coinbase_txt_file);
+        coinbase_stream << "coinbase PLOT DATA\n\nTIME\tBID\tASK\tLAST\n";
+        QList<double> coinbase_keys_values = coinbase_chart->keys->toList();
+        QList<double> coinbase_bid_values = coinbase_chart->bid_values->toList();
+        QList<double> coinbase_ask_values = coinbase_chart->ask_values->toList();
+        QList<double> coinbase_price_values = coinbase_chart->price_values->toList();
+        for (int i = 0; i < coinbase_keys_values.length(); i++) {
+            double bid_value = coinbase_bid_values[i];
+            double ask_value = coinbase_ask_values[i];
+            double price_value = coinbase_price_values[i];
+            if (static_cast<int>(bid_value) != -1 && static_cast<int>(ask_value) != -2 && static_cast<int>(price_value) != -3) {
+                coinbase_stream << i << QDateTime::fromTime_t(static_cast<uint>(coinbase_keys_values[i])).toString("yyyy-MM-dd hh:mm:ss") <<
+                                   "\t" << bid_value << "\t" << ask_value << "\t" << price_value << endl;
+            }
+        }
+        coinbase_stream << "FINISH" << endl;
+    }
 }
 
 void MainWindow::on_actionCSV_triggered()
 {
+    QString dirname = QFileDialog::getExistingDirectory(this,
+                                                        tr("Select a directory to save CSV files"),
+                                                        "");
 
+    QString bitfinex_txt_path(QString("%1/bitfinex_csv_%2.csv").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+    QString bitstamp_txt_path(QString("%1/bitstamp_csv_%2.csv").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+    QString coinbase_txt_path(QString("%1/coinbase_csv_%2.csv").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+
+    QFile bitfinex_txt_file(bitfinex_txt_path);
+    QFile bitstamp_txt_file(bitstamp_txt_path);
+    QFile coinbase_txt_file(coinbase_txt_path);
+
+    if (!bitfinex_txt_file.open(QIODevice::WriteOnly|QFile::WriteOnly)) {
+        QMessageBox::warning(nullptr, "Could not save bitfinex CSV file", QObject::tr( "\nCould not save bitfinex CSV file on disk"));
+    }
+    else {
+        QTextStream bitfinex_stream(&bitfinex_txt_file);
+        bitfinex_stream << "time,bid,ask,last" << endl;
+        QList<double> bitfinex_keys_values = bitfinex_chart->keys->toList();
+        QList<double> bitfinex_bid_values = bitfinex_chart->bid_values->toList();
+        QList<double> bitfinex_ask_values = bitfinex_chart->ask_values->toList();
+        QList<double> bitfinex_price_values = bitfinex_chart->price_values->toList();
+        for (int i = 0; i < bitfinex_keys_values.length(); i++) {
+            double bid_value = bitfinex_bid_values[i];
+            double ask_value = bitfinex_ask_values[i];
+            double price_value = bitfinex_price_values[i];
+            if (static_cast<int>(bid_value) != -1 && static_cast<int>(ask_value) != -2 && static_cast<int>(price_value) != -3) {
+                bitfinex_stream << QDateTime::fromTime_t(static_cast<uint>(bitfinex_keys_values[i])).toString("yyyy-MM-dd hh:mm:ss") <<
+                                   "," << bid_value << "," << ask_value << "," << price_value << endl;
+            }
+        }
+    }
+    if (!bitstamp_txt_file.open(QIODevice::WriteOnly|QFile::WriteOnly)) {
+        QMessageBox::warning(nullptr, "Could not save bitstamp CSV file", QObject::tr( "\nCould not save bitstamp CSV file on disk"));
+    }
+    else {
+        QTextStream bitstamp_stream(&bitstamp_txt_file);
+        bitstamp_stream << "time,bid,ask,last" << endl;
+        QList<double> bitstamp_keys_values = bitstamp_chart->keys->toList();
+        QList<double> bitstamp_bid_values = bitstamp_chart->bid_values->toList();
+        QList<double> bitstamp_ask_values = bitstamp_chart->ask_values->toList();
+        QList<double> bitstamp_price_values = bitstamp_chart->price_values->toList();
+        for (int i = 0; i < bitstamp_keys_values.length(); i++) {
+            double bid_value = bitstamp_bid_values[i];
+            double ask_value = bitstamp_ask_values[i];
+            double price_value = bitstamp_price_values[i];
+            if (static_cast<int>(bid_value) != -1 && static_cast<int>(ask_value) != -2 && static_cast<int>(price_value) != -3) {
+                bitstamp_stream << QDateTime::fromTime_t(static_cast<uint>(bitstamp_keys_values[i])).toString("yyyy-MM-dd hh:mm:ss") <<
+                                   "," << bid_value << "," << ask_value << "," << price_value << endl;
+            }
+        }
+    }
+    if (!coinbase_txt_file.open(QIODevice::WriteOnly|QFile::WriteOnly)) {
+        QMessageBox::warning(nullptr, "Could not save coinbase CSV file", QObject::tr( "\nCould not save coinbase CSV file on disk"));
+    }
+    else {
+        QTextStream coinbase_stream(&coinbase_txt_file);
+        coinbase_stream << "time,bid,ask,last" << endl;
+        QList<double> coinbase_keys_values = coinbase_chart->keys->toList();
+        QList<double> coinbase_bid_values = coinbase_chart->bid_values->toList();
+        QList<double> coinbase_ask_values = coinbase_chart->ask_values->toList();
+        QList<double> coinbase_price_values = coinbase_chart->price_values->toList();
+        for (int i = 0; i < coinbase_keys_values.length(); i++) {
+            double bid_value = coinbase_bid_values[i];
+            double ask_value = coinbase_ask_values[i];
+            double price_value = coinbase_price_values[i];
+            if (static_cast<int>(bid_value) != -1 && static_cast<int>(ask_value) != -2 && static_cast<int>(price_value) != -3) {
+                coinbase_stream << QDateTime::fromTime_t(static_cast<uint>(coinbase_keys_values[i])).toString("yyyy-MM-dd hh:mm:ss") <<
+                                   "," << bid_value << "," << ask_value << "," << price_value << endl;
+            }
+        }
+    }
 }
 
 void MainWindow::on_actionAs_png_image_triggered()
 {
+    QString dirname = QFileDialog::getExistingDirectory(this,
+                                                        tr("Select a directory to save PNG images"),
+                                                        "");
 
+    QString bitfinex_img_path(QString("%1/bitfinex_img_%2.png").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+    QString bitstamp_img_path(QString("%1/bitstamp_img_%2.png").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+    QString coinbase_img_path(QString("%1/coinbase_img_%2.png").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+
+    QFile bitfinex_img_file(bitfinex_img_path);
+    QFile bitstamp_img_file(bitstamp_img_path);
+    QFile coinbase_img_file(coinbase_img_path);
+
+    if (!bitfinex_img_file.open(QIODevice::WriteOnly|QFile::WriteOnly)) {
+        QMessageBox::warning(nullptr, "Could not save bitfinex picture", QObject::tr( "\nCould not save bitfinex PNG picture on disk"));
+    }
+    else {
+        ui->bitfinexdata_wdgt->savePng(bitfinex_img_path);
+    }
+    if (!bitstamp_img_file.open(QIODevice::WriteOnly|QFile::WriteOnly)) {
+        QMessageBox::warning(nullptr, "Could not save bitstamp picture", QObject::tr( "\nCould not save bitstamp PNG picture on disk"));
+    }
+    else {
+        ui->bitstampdata_wdgt->savePng(bitstamp_img_path);
+    }
+    if (!coinbase_img_file.open(QIODevice::WriteOnly|QFile::WriteOnly)) {
+        QMessageBox::warning(nullptr, "Could not save coinbase picture", QObject::tr( "\nCould not save coinbase PNG picture on disk"));
+    }
+    else {
+        ui->coinbasedata_wdgt->savePng(coinbase_img_path);
+    }
 }

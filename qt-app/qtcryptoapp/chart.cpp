@@ -19,6 +19,7 @@ Chart::~Chart()
     delete ask_values;
     delete price_values;
     delete plot_widget;
+    delete plot_cursor;
 }
 
 void Chart::add_data_point(double timestamp, double bid, double ask, double price)
