@@ -4,9 +4,9 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql network charts
+QT       += core gui sql network
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = qtcryptoapp
 TEMPLATE = app
@@ -32,6 +32,7 @@ SOURCES += \
     dbwrapper.cpp \
     exchange.cpp \
     cmcscrapper.cpp \
+    qcustomplot.cpp \
     chart.cpp
 
 HEADERS += \
@@ -39,6 +40,7 @@ HEADERS += \
     dbwrapper.h \
     exchange.h \
     cmcscrapper.h \
+    qcustomplot.h \
     chart.h
 
 FORMS += \

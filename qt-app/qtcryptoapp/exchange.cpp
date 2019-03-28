@@ -21,6 +21,11 @@ void Exchange::make_request()
     qnam_exchange->get(QNetworkRequest(QUrl(api_endpoint)));
 }
 
+void Exchange::start_timer()
+{
+    exchange_timer->start(15 * 1000);
+}
+
 BitfinexExchange::BitfinexExchange(QObject *parent, QString api_endpoint, DBWrapper *dbwrapper) :
     Exchange (parent, api_endpoint, dbwrapper)
 {
@@ -46,8 +51,8 @@ void BitfinexExchange::qnam_finished(QNetworkReply *reply)
                 static_cast<float>(json_response_obj["last_price"].toString().toDouble())
                 );
         dbwrapper->insert_value(*exchange_price);
-        delete exchange_price;
         emit(data_receive_ok());
+        delete exchange_price;
     }
     reply->deleteLater();
 }
@@ -82,8 +87,8 @@ void BitstampExchange::qnam_finished(QNetworkReply *reply)
                 static_cast<float>(json_response_obj["last"].toString().toDouble())
                 );
         dbwrapper->insert_value(*exchange_price);
-        delete exchange_price;
         emit(data_receive_ok());
+        delete exchange_price;
     }
     reply->deleteLater();
 }
@@ -94,8 +99,7 @@ void BitstampExchange::tim_timeout()
 }
 
 CoinbaseExchange::CoinbaseExchange(QObject *parent, DBWrapper *dbwrapper) :
-    Exchange (parent, "NA", dbwrapper),
-    emit_receive_ok(false)
+    Exchange (parent, "NA", dbwrapper)
 {
 }
 
@@ -138,12 +142,9 @@ void CoinbaseExchange::qnam_finished(QNetworkReply *reply)
         }
         if (exchange_price->bid != 0.0f && exchange_price->ask != 0.0f && exchange_price->price != 0.0f) {
             dbwrapper->insert_value(*exchange_price);
+            emit(data_receive_ok());
             delete exchange_price;
             exchange_price = nullptr;
-        }
-        if (emit_receive_ok) {
-            emit(data_receive_ok());
-            qDebug() << "DEBUG: emitted from coinbase network handler";
         }
     }
     reply->deleteLater();
@@ -151,14 +152,12 @@ void CoinbaseExchange::qnam_finished(QNetworkReply *reply)
 
 void CoinbaseExchange::tim_timeout()
 {
-    emit_receive_ok = false;
     set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/buy"));
     make_request();
 
     set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/sell"));
     make_request();
 
-    emit_receive_ok = true;
     set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/spot"));
     make_request();
 }

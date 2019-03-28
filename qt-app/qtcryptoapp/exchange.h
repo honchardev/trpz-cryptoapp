@@ -40,6 +40,7 @@ signals:
 public slots:
     virtual void qnam_finished(QNetworkReply *reply) = 0;
     virtual void tim_timeout() = 0;
+    void start_timer(void);
 
 private:
     QNetworkAccessManager *qnam_exchange;
@@ -75,8 +76,6 @@ public:
     void qnam_finished(QNetworkReply *reply) override;
 
     void tim_timeout() override;
-
-    bool emit_receive_ok;
 };
 
 #endif // EXCHANGE_H

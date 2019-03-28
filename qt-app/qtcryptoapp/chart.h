@@ -1,42 +1,41 @@
-﻿#ifndef CHART_H
+#ifndef CHART_H
 #define CHART_H
 
-#include <QDateTime>
-
+#include <QObject>
 #include <QWidget>
+#include <QVector>
 
-#include <QList>
+#include "qcustomplot.h"
 
-#include <QGridLayout>
-#include <QtCharts>
+#include "dbwrapper.h"
 
-class Chart
+class Chart : public QObject
 {
+    Q_OBJECT
+
 public:
-    Chart(QWidget *parent_widget);
+    explicit Chart(QObject *parent = nullptr, QCustomPlot *plot_widget = nullptr);
+    ~Chart();
 
-    QList< QList<float> > points_y_data;
-    QList< QDateTime > points_x_data;
+    void add_data_point(double timestamp, double bid, double ask, double price);
 
-    void add_point(float bid, float ask, float price);
+    QVector<double> *keys;
+    QVector<double> *bid_values;
+    QVector<double> *ask_values;
+    QVector<double> *price_values;
+
+private slots:
+    void on_hover_show_data(QMouseEvent *event);
 
 private:
-    void setup_chart(void);
-    void gui_setup_chart(QWidget *parent_widget);
+    void create_plot(void);
 
-    QtCharts::QChart *chart;
-    QtCharts::QChartView *chart_view;
+    QCustomPlot *plot_widget;
 
-    QtCharts::QDateTimeAxis *axisX;
-    QtCharts::QValueAxis *axisY;
+    QCPItemLine *plot_cursor;
 
-    QtCharts::QLineSeries *bid_series;
-    QtCharts::QLineSeries *ask_series;
-    QtCharts::QLineSeries *price_series;
-
-    QGridLayout *grid_layout;
-
-    QString MAX_POINTS_ON_GRAPH;
+    double max_graph_y_value;
+    double min_graph_y_value;
 };
 
 #endif // CHART_H

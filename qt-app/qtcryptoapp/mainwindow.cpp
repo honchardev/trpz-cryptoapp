@@ -17,9 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
     dbconnstatus_lbl = new QLabel("DB Connection: No data", this);
     statusBar()->addWidget(dbconnstatus_lbl);
 
-    bitfinex_chart = new Chart(ui->bitfinexdata_wdgt);
-    bitstamp_chart = new Chart(ui->bitstampdata_wdgt);
-    coinbase_chart = new Chart(ui->coinbasedata_wdgt);
+    bitfinex_chart = new Chart(this, ui->bitfinexdata_wdgt);
+    bitstamp_chart = new Chart(this, ui->bitstampdata_wdgt);
+    coinbase_chart = new Chart(this, ui->coinbasedata_wdgt);
 
     dbwrapper = new DBWrapper(this);
     connect(dbwrapper, &DBWrapper::db_conn_ok,
@@ -53,15 +53,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if (dbwrapper->isalive()) {
         cmcscrapper->make_request();
+        bitfinex->make_request();
+        bitstamp->make_request();
+        coinbase->set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/buy"));
+        coinbase->make_request();
+        coinbase->set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/sell"));
+        coinbase->make_request();
+        coinbase->set_api_endpoint(QString("https://api.coinbase.com/v2/prices/btc-usd/spot"));
+        coinbase->make_request();
 
-        // todo: update chart with 3 exchanges historical data using db query.
-        // don't care about the network conn status
-
-        // todo: fill up graph with make_request for each exchange
-        // note: handle coinbase x3 requests
-
-        // todo: start timers for cmcscrapper & 3 charts
         cmcscrapper->start_timer();
+        bitfinex->start_timer();
+        bitstamp->start_timer();
+        coinbase->start_timer();
     }
     else {
         int reply = QMessageBox::critical(this, QString("Database fail"), QString("Couldn't connect to the database"));
@@ -139,13 +143,10 @@ void MainWindow::updategui_bitfinex_block_conn_ok()
     webconnstatus_lbl->setStyleSheet("QLabel {color : green}");
     ui->bitfinex_updrate->setStyleSheet("QLabel {color : green}");
 
-    QVector<float> bitfinex_data({
-                                     bitfinex->exchange_price->bid,
-                                     bitfinex->exchange_price->ask,
-                                     bitfinex->exchange_price->price
-                                 });
-//    bitfinex_chart->points_data.append(bitfinex_data);
-    // todo: save new data entry + update chart
+    bitfinex_chart->add_data_point(bitfinex->exchange_price->timestamp.toTime_t(),
+                                   static_cast<double>(bitfinex->exchange_price->bid),
+                                   static_cast<double>(bitfinex->exchange_price->ask),
+                                   static_cast<double>(bitfinex->exchange_price->price));
 }
 
 void MainWindow::updategui_bitfinex_block_conn_fail()
@@ -154,7 +155,10 @@ void MainWindow::updategui_bitfinex_block_conn_fail()
     webconnstatus_lbl->setStyleSheet("QLabel {color : red}");
     ui->bitfinex_updrate->setStyleSheet("QLabel {color : red}");
 
-    // todo: save prev data entry to the chart + history.
+    bitfinex_chart->add_data_point(QDateTime::currentDateTime().toTime_t(),
+                                   static_cast<double>(bitfinex_chart->bid_values->last()),
+                                   static_cast<double>(bitfinex_chart->ask_values->last()),
+                                   static_cast<double>(bitfinex_chart->price_values->last()));
 }
 
 void MainWindow::updategui_bitstamp_block_conn_ok()
@@ -163,7 +167,10 @@ void MainWindow::updategui_bitstamp_block_conn_ok()
     webconnstatus_lbl->setStyleSheet("QLabel {color : green}");
     ui->bitstamp_updrate->setStyleSheet("QLabel {color : green}");
 
-    // todo: save new data entry + update chart
+    bitstamp_chart->add_data_point(bitstamp->exchange_price->timestamp.toTime_t(),
+                                   static_cast<double>(bitstamp->exchange_price->bid),
+                                   static_cast<double>(bitstamp->exchange_price->ask),
+                                   static_cast<double>(bitstamp->exchange_price->price));
 }
 
 void MainWindow::updategui_bitstamp_block_conn_fail()
@@ -172,7 +179,10 @@ void MainWindow::updategui_bitstamp_block_conn_fail()
     webconnstatus_lbl->setStyleSheet("QLabel {color : red}");
     ui->bitstamp_updrate->setStyleSheet("QLabel {color : red}");
 
-    // todo: save prev data entry to the chart + history.
+    bitstamp_chart->add_data_point(QDateTime::currentDateTime().toTime_t(),
+                                   static_cast<double>(bitstamp_chart->bid_values->last()),
+                                   static_cast<double>(bitstamp_chart->ask_values->last()),
+                                   static_cast<double>(bitstamp_chart->price_values->last()));
 }
 
 void MainWindow::updategui_coinbase_block_conn_ok()
@@ -181,7 +191,10 @@ void MainWindow::updategui_coinbase_block_conn_ok()
     webconnstatus_lbl->setStyleSheet("QLabel {color : green}");
     ui->coinbase_updrate->setStyleSheet("QLabel {color : green}");
 
-    // todo: save new data entry + update chart
+    coinbase_chart->add_data_point(coinbase->exchange_price->timestamp.toTime_t(),
+                                   static_cast<double>(coinbase->exchange_price->bid),
+                                   static_cast<double>(coinbase->exchange_price->ask),
+                                   static_cast<double>(coinbase->exchange_price->price));
 }
 
 void MainWindow::updategui_coinbase_block_conn_fail()
@@ -190,7 +203,10 @@ void MainWindow::updategui_coinbase_block_conn_fail()
     webconnstatus_lbl->setStyleSheet("QLabel {color : red}");
     ui->coinbase_updrate->setStyleSheet("QLabel {color : red}");
 
-    // todo: save prev data entry to the chart + history.
+    coinbase_chart->add_data_point(QDateTime::currentDateTime().toTime_t(),
+                                   static_cast<double>(coinbase_chart->bid_values->last()),
+                                   static_cast<double>(coinbase_chart->ask_values->last()),
+                                   static_cast<double>(coinbase_chart->price_values->last()));
 }
 
 void MainWindow::on_actionHelp_triggered()

@@ -423,7 +423,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QWidget" name="bitfinexdata_wdgt" native="true">
+           <widget class="QCustomPlot" name="bitfinexdata_wdgt" native="true">
             <property name="minimumSize">
              <size>
               <width>650</width>
@@ -519,7 +519,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QWidget" name="bitstampdata_wdgt" native="true">
+           <widget class="QCustomPlot" name="bitstampdata_wdgt" native="true">
             <property name="minimumSize">
              <size>
               <width>650</width>
@@ -615,7 +615,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QWidget" name="coinbasedata_wdgt" native="true">
+           <widget class="QCustomPlot" name="coinbasedata_wdgt" native="true">
             <property name="minimumSize">
              <size>
               <width>650</width>
@@ -752,6 +752,14 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
