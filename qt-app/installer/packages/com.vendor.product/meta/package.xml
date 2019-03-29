@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package>
     <DisplayName>The root component</DisplayName>
-    <Description>Install this example.</Description>
+    <Description>Main module for CryptoApp application</Description>
     <Version>0.1.0-1</Version>
-    <ReleaseDate>2010-09-21</ReleaseDate>
+    <ReleaseDate>2019-03-29</ReleaseDate>
     <Licenses>
-        <License name="Beer Public License Agreement" file="license.txt" />
+        <License name="MIT License" file="license.txt" />
     </Licenses>
     <Default>false</Default>
 </Package>

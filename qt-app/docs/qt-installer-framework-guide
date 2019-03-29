@@ -5,3 +5,6 @@ https://doc.qt.io/qtinstallerframework/ifw-offline-installers.html
 binarycreator.exe --help
 
 QtInstallerFramework\3.0\examples\tutorial + remove dynamically loaded page
+
+win:
+C:\Qt\Tools\QtInstallerFramework\3.0\bin\binarycreator.exe --offline-only -c config/config.xml -p packages win64installer
