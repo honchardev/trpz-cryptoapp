@@ -13,11 +13,17 @@ TEMPLATE = app
 
 QMAKE_LFLAGS += -no-pie
 
+# Search for qcustomplot shared libraries in executable directory, not in gcc/lib or /usr/lib
+QMAKE_LFLAGS += -Wl,-rpath,"'$$ORIGIN'"
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+
+# Tell the qcustomplot header that it will be used as library:
+DEFINES += QCUSTOMPLOT_USE_LIBRARY
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -26,13 +32,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+# Link with debug version of qcustomplot if compiling in debug mode, else with release library:
+CONFIG(debug, release|debug) {
+  win32:QCPLIB = qcustomplotdwin
+  else: QCPLIB = qcustomplotd
+} else {
+  win32:QCPLIB = qcustomplotwin
+  else: QCPLIB = qcustomplot
+}
+LIBS += -L./ -l$$QCPLIB
+
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
     dbwrapper.cpp \
     exchange.cpp \
     cmcscrapper.cpp \
-    qcustomplot.cpp \
     chart.cpp
 
 HEADERS += \
@@ -40,7 +55,6 @@ HEADERS += \
     dbwrapper.h \
     exchange.h \
     cmcscrapper.h \
-    qcustomplot.h \
     chart.h
 
 FORMS += \

@@ -245,9 +245,9 @@ void MainWindow::on_actionText_triggered()
                                                         tr("Select a directory to save TXT files"),
                                                         "");
 
-    QString bitfinex_txt_path(QString("%1/bitfinex_txt_%2.txt").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
-    QString bitstamp_txt_path(QString("%1/bitstamp_txt_%2.txt").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
-    QString coinbase_txt_path(QString("%1/coinbase_txt_%2.txt").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+    QString bitfinex_txt_path(QString("%1/bitfinex_txt_%2.txt").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm:ss")));
+    QString bitstamp_txt_path(QString("%1/bitstamp_txt_%2.txt").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm:ss")));
+    QString coinbase_txt_path(QString("%1/coinbase_txt_%2.txt").arg(dirname).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm:ss")));
 
     QFile bitfinex_txt_file(bitfinex_txt_path);
     QFile bitstamp_txt_file(bitstamp_txt_path);
