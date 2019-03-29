@@ -1,0 +1,13 @@
+# trpz-cryptoapp
+Qt+Flask application to view, export and constantly gather cryptocurrencies (btc) data
+
+# built with
+qt 5.12.1  
+qmake 3.1  
+qcustomplot 2.0.1  
+
+## installer
+Compiled with:  
+Linux: ubuntu 18.04.2 LTS  
+Win: windows 10  
+Please note, that win requires openssl installed  
